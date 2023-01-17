@@ -80,6 +80,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:theme="@style/AppTheme"
+                android:value="@={viewmodel.isoRatio}"
+                android:valueFrom="@{viewmodel.isoRatioRange.lower}"
+                android:valueTo="@{viewmodel.isoRatioRange.upper}"
+                app:goneUnless="@{viewmodel.showIsoSlider}" />
+
+            <com.google.android.material.slider.Slider
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:theme="@style/AppTheme"
                 android:value="@={viewmodel.lensDistance}"
                 android:valueFrom="@{viewmodel.lensDistanceRange.lower}"
                 android:valueTo="@{viewmodel.lensDistanceRange.upper}"
@@ -111,6 +120,15 @@
                 android:contentDescription="@string/set_white_balance"
                 android:onClick="@{() -> viewmodel.toggleAutoWhiteBalanceMode()}"
                 android:src="@drawable/ic_baseline_wb_auto_24"
+                app:goneUnless="@{viewmodel.isAutoWhiteBalanceAvailable}"
+                app:tint="@android:color/white" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/set_white_balance"
+                android:onClick="@{() -> viewmodel.toggleIsoSlider()}"
+                android:src="@drawable/ic_baseline_15mp_24"
                 app:goneUnless="@{viewmodel.isAutoWhiteBalanceAvailable}"
                 app:tint="@android:color/white" />
 

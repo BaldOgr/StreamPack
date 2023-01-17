@@ -17,6 +17,7 @@ package io.github.thibaultbee.streampack.app.ui.main
 
 import android.Manifest
 import android.content.Context
+import android.hardware.camera2.CameraMetadata.CONTROL_AE_MODE_ON
 import android.hardware.camera2.CaptureResult
 import android.util.Log
 import android.util.Range
@@ -186,6 +187,37 @@ class PreviewViewModel(private val streamerManager: StreamerManager) : Observabl
             }
         }
 
+    val showIsoSlider = MutableLiveData(false)
+    fun toggleIsoSlider() {
+        if (isoRatio < (isoRatioRange.value?.lower ?: 0f)) {
+            isoRatio = isoRatioRange.value?.lower ?: 50f
+        }
+        streamerManager.cameraSettings?.let {
+
+            val awbModes = it.exposure.availableAutoModes
+            val index = awbModes.indexOf(it.exposure.autoMode)
+            if (it.exposure.autoMode == CONTROL_AE_MODE_ON) {
+                it.exposure.autoMode = awbModes[(index + 1) % awbModes.size]
+            }
+        }
+        showIsoSlider.postValue(!(showIsoSlider.value)!!)
+    }
+    val isoRatioRange = MutableLiveData<Range<Float>>()
+    var isoRatio: Float
+        @Bindable get() = streamerManager.cameraSettings?.iso?.current?.toFloat()
+            ?: 50f
+        set(value) {
+            streamerManager.cameraSettings?.iso?.let {
+                it.current = value.toInt()
+                notifyPropertyChanged(BR.isoRatio)
+            }
+        }
+
+    val isIsoBalanceAvailable = MutableLiveData(false)
+    fun toggleIsoMode() {
+
+    }
+
     val isAutoFocusModeAvailable = MutableLiveData(false)
     fun toggleAutoFocusMode() {
         streamerManager.cameraSettings?.let {
@@ -253,6 +285,11 @@ class PreviewViewModel(private val streamerManager: StreamerManager) : Observabl
 
                 zoomRatioRange.postValue(zoom.availableRatioRange)
                 zoomRatio = zoom.zoomRatio
+            }
+
+            it.iso.let { iso ->
+                isoRatioRange.postValue(Range(iso.availableValues.lower.toFloat(), iso.availableValues.upper.toFloat()))
+                isoRatio = iso.current.toFloat()
             }
 
             it.focus.let { focus ->

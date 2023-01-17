@@ -180,6 +180,16 @@ fun Context.getAutoExposureModes(cameraId: String): List<Int> {
 }
 
 /**
+ *  Get supported iso range
+ *
+ * @param cameraId camera id
+ * @return iso range
+ */
+fun Context.getIsoRange(cameraId: String): Range<Int> {
+    return getCameraCharacteristics(cameraId).get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE) ?: Range(0, 0)
+}
+
+/**
  * Gets exposure range.
  *
  * @param cameraId camera id

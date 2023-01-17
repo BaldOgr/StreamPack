@@ -25,4 +25,5 @@ jobs:
           name: apks
           path: |
             demos/**/build/outputs/apk/debug/*.apk
+            extensions/**/build/outputs/aar/*.aar
 

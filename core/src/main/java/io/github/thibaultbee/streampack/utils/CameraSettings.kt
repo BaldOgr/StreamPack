@@ -51,6 +51,11 @@ class CameraSettings(context: Context, private val cameraController: CameraContr
     val whiteBalance = WhiteBalance(context, cameraController)
 
     /**
+     * Current camera ISO API.
+     */
+    val iso = Iso(context, cameraController)
+
+    /**
      * Current camera exposure API.
      */
     val exposure = Exposure(context, cameraController)
@@ -75,6 +80,26 @@ class CameraSettings(context: Context, private val cameraController: CameraContr
      */
     val focusMetering =
         FocusMetering(context, cameraController, zoom, focus, exposure, whiteBalance)
+}
+
+class Iso(private val context: Context, private val cameraController: CameraController) {
+    /**
+     * Gets supported ISO range
+     *
+     * @return iso range
+     */
+    val availableValues: Range<Int>
+        get() = cameraController.cameraId?.let { context.getIsoRange(it) }
+            ?: Range(0, 0)
+
+
+
+    var current: Int
+        get() = cameraController.getSetting(CaptureRequest.SENSOR_SENSITIVITY) ?: availableValues.lower
+        set(value) {
+            cameraController.setRepeatingSetting(CaptureRequest.SENSOR_SENSITIVITY, value)
+        }
+
 }
 
 class WhiteBalance(private val context: Context, private val cameraController: CameraController) {
